@@ -54,7 +54,7 @@ echo "Creating release: $FINAL_TAG"
 gh release create "$FINAL_TAG" \
   --repo "$BACKUP_REPO" \
   --title "$FINAL_TAG" \
-  --notes "Backup of \`${OWNER}/${REPO}\` branch \`${BRANCH}\` on ${DATE}." \
+  --notes "Backup of [${OWNER}/${REPO}](https://github.com/${OWNER}/${REPO}) branch \`${BRANCH}\` on ${DATE}." \
   "${TMP_ZIP}#${ZIP_FILENAME}"
 
 rm -f "$TMP_ZIP"
