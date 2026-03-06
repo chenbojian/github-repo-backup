@@ -39,20 +39,23 @@ TMP_ZIP="/tmp/${ZIP_FILENAME}"
 echo "Downloading $ZIP_URL..."
 curl -fsSL "$ZIP_URL" -o "$TMP_ZIP"
 
+# Use BACKUP_REPO env var if set (e.g. in CI), otherwise default to this repo
+BACKUP_REPO="${BACKUP_REPO:-chenbojian/github-repo-backup}"
+
 # If a release with this tag already exists on the same date, append a counter
 FINAL_TAG="$RELEASE_TAG"
 COUNTER=1
-while gh release view "$FINAL_TAG" --repo chenbojian/github-repo-backup &>/dev/null; do
+while gh release view "$FINAL_TAG" --repo "$BACKUP_REPO" &>/dev/null; do
   COUNTER=$((COUNTER + 1))
   FINAL_TAG="${RELEASE_TAG}-${COUNTER}"
 done
 
 echo "Creating release: $FINAL_TAG"
 gh release create "$FINAL_TAG" \
-  --repo chenbojian/github-repo-backup \
+  --repo "$BACKUP_REPO" \
   --title "$FINAL_TAG" \
   --notes "Backup of \`${OWNER}/${REPO}\` branch \`${BRANCH}\` on ${DATE}." \
   "${TMP_ZIP}#${ZIP_FILENAME}"
 
 rm -f "$TMP_ZIP"
-echo "Done: https://github.com/chenbojian/github-repo-backup/releases/tag/${FINAL_TAG}"
+echo "Done: https://github.com/${BACKUP_REPO}/releases/tag/${FINAL_TAG}"

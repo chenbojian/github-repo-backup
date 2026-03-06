@@ -1,0 +1,27 @@
+name: Backup GitHub Repo
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_url:
+        description: "GitHub repo URL to back up (e.g. https://github.com/owner/repo)"
+        required: true
+      branch:
+        description: "Branch to back up (leave empty for default branch)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write  # needed to create releases
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      BACKUP_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run backup
+        run: ./backup.sh "${{ inputs.repo_url }}" "${{ inputs.branch }}"
